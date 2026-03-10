@@ -1,0 +1,259 @@
+import { Org, Member, Job, Lead } from "@/types";
+
+export const ORGS: Org[] = [
+  {
+    id: "org_1",
+    name: "Apex Roofing Co.",
+    slug: "apex-roofing",
+    slogan: "Top-quality roofs, top-notch service.",
+    primaryColor: "#f97316",
+    active: true,
+    createdAt: "2024-01-15",
+  },
+  {
+    id: "org_2",
+    name: "BlueWave Plumbing",
+    slug: "bluewave-plumbing",
+    slogan: "Flow with confidence.",
+    primaryColor: "#3b82f6",
+    active: true,
+    createdAt: "2024-03-22",
+  },
+  {
+    id: "org_3",
+    name: "GreenLeaf Landscaping",
+    slug: "greenleaf",
+    slogan: "Growing beautiful spaces.",
+    primaryColor: "#22c55e",
+    active: true,
+    createdAt: "2024-06-10",
+  },
+];
+
+export const MEMBERS: Member[] = [
+  { id: "m1", orgId: "org_1", userId: "u1", name: "Jordan Mills", email: "jordan@apexroofing.com", role: "owner", joinedAt: "2024-01-15" },
+  { id: "m2", orgId: "org_1", userId: "u2", name: "Casey Torres", email: "casey@apexroofing.com", role: "admin", joinedAt: "2024-02-01" },
+  { id: "m3", orgId: "org_1", userId: "u3", name: "Riley Chen", email: "riley@apexroofing.com", role: "member", joinedAt: "2024-03-10" },
+  { id: "m4", orgId: "org_1", userId: "u4", name: "Morgan Davis", email: "morgan@apexroofing.com", role: "member", joinedAt: "2024-04-05" },
+  { id: "m5", orgId: "org_2", userId: "u5", name: "Alex Kim", email: "alex@bluewave.com", role: "owner", joinedAt: "2024-03-22" },
+  { id: "m6", orgId: "org_2", userId: "u6", name: "Sam Patel", email: "sam@bluewave.com", role: "member", joinedAt: "2024-04-15" },
+];
+
+export const JOBS: Job[] = [
+  {
+    id: "job_001",
+    orgId: "org_1",
+    title: "Full Roof Replacement – 3,200 sq ft",
+    client: "Henderson Family",
+    clientEmail: "hendersons@email.com",
+    clientPhone: "(555) 210-4400",
+    address: "142 Oak Creek Dr, Austin TX 78701",
+    status: "in_progress",
+    value: 18500,
+    source: "referral",
+    assignedTo: "u3",
+    assignedName: "Riley Chen",
+    scheduledDate: "2026-03-08",
+    notes: "Replacing asphalt shingles with architectural. Fascia boards need repair too.",
+    createdAt: "2026-02-28",
+    updatedAt: "2026-03-08",
+  },
+  {
+    id: "job_002",
+    orgId: "org_1",
+    title: "Storm Damage Repair",
+    client: "Park Ridge HOA",
+    clientEmail: "manager@parkridge.com",
+    clientPhone: "(555) 330-9900",
+    address: "800 Park Ridge Blvd, Austin TX 78702",
+    status: "quoted",
+    value: 42000,
+    source: "website",
+    assignedTo: "u2",
+    assignedName: "Casey Torres",
+    scheduledDate: "2026-03-20",
+    notes: "Hail damage across 12 units. Insurance claim #INC-20240115.",
+    createdAt: "2026-03-01",
+    updatedAt: "2026-03-05",
+  },
+  {
+    id: "job_003",
+    orgId: "org_1",
+    title: "Flat Roof Coating – Commercial",
+    client: "Pinnacle Warehousing LLC",
+    clientEmail: "ops@pinnaclewh.com",
+    clientPhone: "(555) 440-7788",
+    address: "2200 Industrial Pkwy, Round Rock TX 78665",
+    status: "scheduled",
+    value: 11200,
+    source: "google",
+    assignedTo: "u4",
+    assignedName: "Morgan Davis",
+    scheduledDate: "2026-03-15",
+    createdAt: "2026-03-03",
+    updatedAt: "2026-03-06",
+  },
+  {
+    id: "job_004",
+    orgId: "org_1",
+    title: "Roof Inspection + Minor Repair",
+    client: "Raj Sharma",
+    clientEmail: "raj.sharma@gmail.com",
+    clientPhone: "(555) 112-3344",
+    address: "304 Willow Bend Ct, Cedar Park TX 78613",
+    status: "completed",
+    value: 850,
+    source: "google",
+    assignedTo: "u3",
+    assignedName: "Riley Chen",
+    completedDate: "2026-03-04",
+    createdAt: "2026-03-02",
+    updatedAt: "2026-03-04",
+  },
+  {
+    id: "job_005",
+    orgId: "org_1",
+    title: "New Construction Roof – 4BD Home",
+    client: "Linwood Builders",
+    clientEmail: "bids@linwoodbuilders.com",
+    clientPhone: "(555) 880-2244",
+    address: "5511 Sunrise Meadow, Pflugerville TX 78660",
+    status: "new",
+    value: 22400,
+    source: "referral",
+    createdAt: "2026-03-07",
+    updatedAt: "2026-03-07",
+  },
+  {
+    id: "job_006",
+    orgId: "org_1",
+    title: "Gutter Replacement + Downspouts",
+    client: "Maria Gomez",
+    clientEmail: "mgomez@yahoo.com",
+    clientPhone: "(555) 660-1122",
+    address: "712 Blue Sage Dr, Austin TX 78749",
+    status: "contacted",
+    value: 3200,
+    source: "facebook",
+    assignedTo: "u2",
+    assignedName: "Casey Torres",
+    createdAt: "2026-03-06",
+    updatedAt: "2026-03-08",
+  },
+  {
+    id: "job_007",
+    orgId: "org_1",
+    title: "Emergency Leak Repair",
+    client: "Douglas Whitfield",
+    clientEmail: "dwhitfield@work.net",
+    clientPhone: "(555) 990-3344",
+    address: "89 Clearwater Pass, Austin TX 78703",
+    status: "completed",
+    value: 1400,
+    source: "referral",
+    assignedTo: "u3",
+    assignedName: "Riley Chen",
+    completedDate: "2026-03-05",
+    createdAt: "2026-03-04",
+    updatedAt: "2026-03-05",
+  },
+  {
+    id: "job_008",
+    orgId: "org_1",
+    title: "Tile Roof Restoration",
+    client: "Sunset Hills Church",
+    clientEmail: "admin@sunsethills.org",
+    clientPhone: "(555) 770-6655",
+    address: "1200 Church Hill Rd, Austin TX 78745",
+    status: "cancelled",
+    value: 16000,
+    source: "door_knock",
+    notes: "Client decided to postpone until next fiscal year.",
+    createdAt: "2026-02-20",
+    updatedAt: "2026-03-01",
+  },
+  {
+    id: "job_009",
+    orgId: "org_1",
+    title: "Skylight Installation x3",
+    client: "Hernandez Residence",
+    clientEmail: "tony.h@gmail.com",
+    clientPhone: "(555) 224-8890",
+    address: "455 Creekwood Dr, Bastrop TX 78602",
+    status: "quoted",
+    value: 7800,
+    source: "website",
+    createdAt: "2026-03-08",
+    updatedAt: "2026-03-09",
+  },
+  {
+    id: "job_010",
+    orgId: "org_1",
+    title: "Multi-Unit Roof Repair – 6 Townhomes",
+    client: "Westfield Property Mgmt",
+    clientEmail: "maint@westfield.com",
+    clientPhone: "(555) 110-5566",
+    address: "300–360 Westfield Row, Austin TX 78704",
+    status: "in_progress",
+    value: 28600,
+    source: "referral",
+    assignedTo: "u4",
+    assignedName: "Morgan Davis",
+    scheduledDate: "2026-03-05",
+    createdAt: "2026-02-25",
+    updatedAt: "2026-03-08",
+  },
+];
+
+export const LEADS: Lead[] = [
+  { id: "lead_001", orgId: "org_1", name: "Tom Bradley", email: "tom@email.com", phone: "(555) 111-2222", source: "google", status: "new", value: 5000, createdAt: "2026-03-09" },
+  { id: "lead_002", orgId: "org_1", name: "Priya Nair", email: "priya@email.com", phone: "(555) 333-4444", source: "facebook", status: "contacted", value: 3200, createdAt: "2026-03-08" },
+  { id: "lead_003", orgId: "org_1", name: "Carlos Vega", phone: "(555) 555-6666", source: "referral", status: "qualified", value: 18000, createdAt: "2026-03-07" },
+  { id: "lead_004", orgId: "org_1", name: "Lisa Park", email: "lisa@email.com", source: "website", status: "converted", value: 11200, createdAt: "2026-03-03" },
+  { id: "lead_005", orgId: "org_1", name: "Derek Hunt", email: "derek@email.com", phone: "(555) 777-8888", source: "yelp", status: "new", value: 2800, createdAt: "2026-03-09" },
+  { id: "lead_006", orgId: "org_1", name: "Angela Frost", phone: "(555) 999-0000", source: "door_knock", status: "lost", notes: "Went with another contractor.", createdAt: "2026-03-01" },
+  { id: "lead_007", orgId: "org_1", name: "Nathan Reeves", email: "nreeves@email.com", source: "google", status: "contacted", value: 6500, createdAt: "2026-03-06" },
+  { id: "lead_008", orgId: "org_1", name: "Sandra Wu", email: "swu@email.com", phone: "(555) 121-3434", source: "referral", status: "qualified", value: 22000, createdAt: "2026-03-05" },
+];
+
+export const MONTHLY_REVENUE = [
+  { month: "Sep", revenue: 38000, jobs: 8 },
+  { month: "Oct", revenue: 52000, jobs: 11 },
+  { month: "Nov", revenue: 44000, jobs: 9 },
+  { month: "Dec", revenue: 29000, jobs: 6 },
+  { month: "Jan", revenue: 35000, jobs: 7 },
+  { month: "Feb", revenue: 61000, jobs: 13 },
+  { month: "Mar", revenue: 54000, jobs: 10 },
+];
+
+export function getOrgJobs(orgId: string): Job[] {
+  return JOBS.filter((j) => j.orgId === orgId);
+}
+
+export function getOrgLeads(orgId: string): Lead[] {
+  return LEADS.filter((l) => l.orgId === orgId);
+}
+
+export function getOrgMembers(orgId: string): Member[] {
+  return MEMBERS.filter((m) => m.orgId === orgId);
+}
+
+export function getDashboardStats(orgId: string) {
+  const jobs = getOrgJobs(orgId);
+  const leads = getOrgLeads(orgId);
+  const completed = jobs.filter((j) => j.status === "completed");
+  const active = jobs.filter((j) => ["in_progress", "scheduled", "quoted", "contacted"].includes(j.status));
+  const totalRevenue = completed.reduce((s, j) => s + j.value, 0);
+  const pendingRevenue = active.reduce((s, j) => s + j.value, 0);
+  const converted = leads.filter((l) => l.status === "converted").length;
+  return {
+    totalJobs: jobs.length,
+    activeJobs: active.length,
+    completedJobs: completed.length,
+    totalRevenue,
+    pendingRevenue,
+    newLeads: leads.filter((l) => l.status === "new").length,
+    conversionRate: leads.length > 0 ? Math.round((converted / leads.length) * 100) : 0,
+    avgJobValue: completed.length > 0 ? Math.round(totalRevenue / completed.length) : 0,
+  };
+}
