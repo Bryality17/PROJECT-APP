@@ -74,6 +74,30 @@ export interface Lead {
   createdAt: string;
 }
 
+export type ProductCategory =
+  | "roofing_materials"
+  | "gutters"
+  | "service_packages"
+  | "addons";
+
+export interface Product {
+  id: string;
+  orgId: string;
+  name: string;
+  description: string;
+  category: ProductCategory;
+  price: number;
+  unit: string;
+  inStock: boolean;
+  featured?: boolean;
+  tags?: string[];
+}
+
+export interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
 export interface DashboardStats {
   totalJobs: number;
   activeJobs: number;

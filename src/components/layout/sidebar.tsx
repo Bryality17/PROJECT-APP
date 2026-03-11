@@ -12,6 +12,7 @@ import {
   Zap,
   LogOut,
   Bell,
+  ShoppingBag,
 } from "lucide-react";
 import { OrgSwitcher } from "./org-switcher";
 import { useOrg } from "./org-context";
@@ -22,6 +23,7 @@ const NAV_ITEMS = [
   { href: "/dashboard",          label: "Dashboard",  icon: LayoutDashboard },
   { href: "/dashboard/jobs",     label: "Jobs",        icon: Briefcase },
   { href: "/dashboard/leads",    label: "Leads",       icon: UserCircle },
+  { href: "/dashboard/shop",     label: "Shop",        icon: ShoppingBag },
   { href: "/dashboard/reports",  label: "Reports",     icon: BarChart3 },
   { href: "/dashboard/team",     label: "Team",        icon: Users },
   { href: "/dashboard/settings", label: "Settings",    icon: Settings },
