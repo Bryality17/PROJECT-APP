@@ -1,4 +1,4 @@
-import { Org, Member, Job, Lead, Product } from "@/types";
+import { Org, Member, Job, Lead, Product, Order } from "@/types";
 
 export const ORGS: Org[] = [
   {
@@ -470,4 +470,85 @@ export function getDashboardStats(orgId: string) {
     conversionRate: leads.length > 0 ? Math.round((converted / leads.length) * 100) : 0,
     avgJobValue: completed.length > 0 ? Math.round(totalRevenue / completed.length) : 0,
   };
+}
+
+export const ORDERS: Order[] = [
+  {
+    id: "ord_001",
+    orgId: "org_1",
+    orderNumber: "ORD-1001",
+    customer: { name: "Marcus Webb", email: "marcus.webb@email.com", phone: "(555) 210-3847", address: "412 Birchwood Lane, Austin, TX 78701" },
+    items: [
+      { productId: "prod_001", name: "Architectural Shingles (Square)", price: 185, quantity: 20, unit: "square" },
+      { productId: "prod_002", name: "Synthetic Underlayment Roll", price: 78, quantity: 4, unit: "roll" },
+    ],
+    subtotal: 4012,
+    status: "delivered",
+    createdAt: "2026-02-14T10:22:00Z",
+    updatedAt: "2026-02-20T14:00:00Z",
+  },
+  {
+    id: "ord_002",
+    orgId: "org_1",
+    orderNumber: "ORD-1002",
+    customer: { name: "Priya Nair", email: "priya.nair@homesolutions.com", phone: "(555) 874-2190", address: "77 Cedar Ridge Dr, Denver, CO 80203" },
+    items: [
+      { productId: "prod_012", name: "Annual Maintenance Plan", price: 599, quantity: 1, unit: "year" },
+      { productId: "prod_011", name: "Basic Roof Inspection", price: 199, quantity: 1, unit: "inspection" },
+    ],
+    subtotal: 798,
+    status: "processing",
+    createdAt: "2026-03-01T09:05:00Z",
+    updatedAt: "2026-03-01T09:05:00Z",
+  },
+  {
+    id: "ord_003",
+    orgId: "org_1",
+    orderNumber: "ORD-1003",
+    customer: { name: "Dave Kowalski", email: "dkowalski@gmail.com", phone: "(555) 330-6641", address: "5 Oak Hollow Rd, Nashville, TN 37201" },
+    items: [
+      { productId: "prod_007", name: "5\" K-Style Gutter (10 ft)", price: 28, quantity: 12, unit: "section" },
+      { productId: "prod_008", name: "Downspout (10 ft)", price: 16, quantity: 6, unit: "section" },
+      { productId: "prod_009", name: "Gutter Guard (4 ft)", price: 35, quantity: 8, unit: "piece" },
+    ],
+    subtotal: 712,
+    status: "shipped",
+    createdAt: "2026-03-05T14:30:00Z",
+    updatedAt: "2026-03-07T08:00:00Z",
+  },
+  {
+    id: "ord_004",
+    orgId: "org_1",
+    orderNumber: "ORD-1004",
+    customer: { name: "Sandra Ortiz", email: "s.ortiz@renovatepro.net", phone: "(555) 992-4478", address: "201 Maple St, Phoenix, AZ 85001" },
+    items: [
+      { productId: "prod_015", name: "Skylight Installation (single)", price: 1450, quantity: 2, unit: "each" },
+      { productId: "prod_016", name: "Ridge Vent (10 ft)", price: 65, quantity: 5, unit: "section" },
+    ],
+    subtotal: 3225,
+    status: "pending",
+    notes: "Customer requested installation before April 15th.",
+    createdAt: "2026-03-09T11:15:00Z",
+    updatedAt: "2026-03-09T11:15:00Z",
+  },
+  {
+    id: "ord_005",
+    orgId: "org_1",
+    orderNumber: "ORD-1005",
+    customer: { name: "Tom Fischer", email: "tfischer@constructco.com", phone: "(555) 107-8823", address: "88 Industrial Blvd, Houston, TX 77001" },
+    items: [
+      { productId: "prod_004", name: "Ice & Water Shield", price: 120, quantity: 6, unit: "roll" },
+      { productId: "prod_003", name: "Ridge Cap Shingles", price: 54, quantity: 10, unit: "bundle" },
+      { productId: "prod_005", name: "Roof Deck Nails (1 lb)", price: 18, quantity: 20, unit: "lb" },
+    ],
+    subtotal: 1620,
+    status: "cancelled",
+    notes: "Customer cancelled — project delayed to Q3.",
+    createdAt: "2026-02-28T16:45:00Z",
+    updatedAt: "2026-03-02T10:00:00Z",
+  },
+];
+
+export function getOrgOrders(orgId: string): Order[] {
+  return ORDERS.filter((o) => o.orgId === orgId);
 }

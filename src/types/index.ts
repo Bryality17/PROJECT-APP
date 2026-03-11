@@ -98,6 +98,39 @@ export interface CartItem {
   quantity: number;
 }
 
+export type OrderStatus =
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled";
+
+export interface OrderItem {
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  unit: string;
+}
+
+export interface Order {
+  id: string;
+  orgId: string;
+  orderNumber: string;
+  customer: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+  };
+  items: OrderItem[];
+  subtotal: number;
+  status: OrderStatus;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface DashboardStats {
   totalJobs: number;
   activeJobs: number;
