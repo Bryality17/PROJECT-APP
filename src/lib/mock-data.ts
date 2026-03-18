@@ -1,4 +1,4 @@
-import { Org, Member, Job, Lead, Product, Order } from "@/types";
+import { Org, Member, Customer, Job } from "@/types";
 
 export const ORGS: Org[] = [
   {
@@ -19,15 +19,6 @@ export const ORGS: Org[] = [
     active: true,
     createdAt: "2024-03-22",
   },
-  {
-    id: "org_3",
-    name: "GreenLeaf Landscaping",
-    slug: "greenleaf",
-    slogan: "Growing beautiful spaces.",
-    primaryColor: "#22c55e",
-    active: true,
-    createdAt: "2024-06-10",
-  },
 ];
 
 export const MEMBERS: Member[] = [
@@ -36,402 +27,182 @@ export const MEMBERS: Member[] = [
   { id: "m3", orgId: "org_1", userId: "u3", name: "Riley Chen", email: "riley@apexroofing.com", role: "member", joinedAt: "2024-03-10" },
   { id: "m4", orgId: "org_1", userId: "u4", name: "Morgan Davis", email: "morgan@apexroofing.com", role: "member", joinedAt: "2024-04-05" },
   { id: "m5", orgId: "org_2", userId: "u5", name: "Alex Kim", email: "alex@bluewave.com", role: "owner", joinedAt: "2024-03-22" },
-  { id: "m6", orgId: "org_2", userId: "u6", name: "Sam Patel", email: "sam@bluewave.com", role: "member", joinedAt: "2024-04-15" },
 ];
 
+// ── Customers ───────────────────────────────────────────────
+export const CUSTOMERS: Customer[] = [
+  { id: "cust_001", orgId: "org_1", name: "Henderson Family", phone: "(555) 210-4400", email: "hendersons@email.com", createdAt: "2026-01-10" },
+  { id: "cust_002", orgId: "org_1", name: "Park Ridge HOA", phone: "(555) 330-9900", email: "manager@parkridge.com", notes: "12-unit complex, main contact: Diana", createdAt: "2026-01-15" },
+  { id: "cust_003", orgId: "org_1", name: "Pinnacle Warehousing LLC", phone: "(555) 440-7788", email: "ops@pinnaclewh.com", createdAt: "2026-02-01" },
+  { id: "cust_004", orgId: "org_1", name: "Raj Sharma", phone: "(555) 112-3344", email: "raj.sharma@gmail.com", createdAt: "2026-02-10" },
+  { id: "cust_005", orgId: "org_1", name: "Linwood Builders", phone: "(555) 880-2244", email: "bids@linwoodbuilders.com", notes: "Commercial builder, repeat client", createdAt: "2026-02-15" },
+  { id: "cust_006", orgId: "org_1", name: "Maria Gomez", phone: "(555) 660-1122", email: "mgomez@yahoo.com", createdAt: "2026-02-20" },
+  { id: "cust_007", orgId: "org_1", name: "Douglas Whitfield", phone: "(555) 990-3344", email: "dwhitfield@work.net", createdAt: "2026-02-25" },
+  { id: "cust_008", orgId: "org_1", name: "Westfield Property Mgmt", phone: "(555) 110-5566", email: "maint@westfield.com", notes: "Manages 40+ properties in Austin area", createdAt: "2026-01-05" },
+  { id: "cust_009", orgId: "org_1", name: "Hernandez Residence", phone: "(555) 224-8890", email: "tony.h@gmail.com", createdAt: "2026-03-01" },
+  { id: "cust_010", orgId: "org_1", name: "Summit Dental Group", phone: "(555) 445-7700", email: "office@summitdental.com", createdAt: "2026-03-05" },
+];
+
+// ── Jobs ────────────────────────────────────────────────────
 export const JOBS: Job[] = [
   {
     id: "job_001",
     orgId: "org_1",
-    title: "Full Roof Replacement – 3,200 sq ft",
-    client: "Henderson Family",
-    clientEmail: "hendersons@email.com",
-    clientPhone: "(555) 210-4400",
+    customerId: "cust_001",
+    customerName: "Henderson Family",
+    title: "Full Roof Replacement - 3,200 sq ft",
+    description: "Replacing asphalt shingles with architectural. Fascia boards need repair too.",
     address: "142 Oak Creek Dr, Austin TX 78701",
     status: "in_progress",
-    value: 18500,
-    source: "referral",
-    assignedTo: "u3",
-    assignedName: "Riley Chen",
-    scheduledDate: "2026-03-08",
-    notes: "Replacing asphalt shingles with architectural. Fascia boards need repair too.",
+    quotedAmount: 18500,
+    approvedAmount: 18500,
     createdAt: "2026-02-28",
     updatedAt: "2026-03-08",
   },
   {
     id: "job_002",
     orgId: "org_1",
-    title: "Storm Damage Repair",
-    client: "Park Ridge HOA",
-    clientEmail: "manager@parkridge.com",
-    clientPhone: "(555) 330-9900",
+    customerId: "cust_002",
+    customerName: "Park Ridge HOA",
+    title: "Storm Damage Repair - 12 Units",
+    description: "Hail damage across 12 units. Insurance claim #INC-20240115.",
     address: "800 Park Ridge Blvd, Austin TX 78702",
     status: "quoted",
-    value: 42000,
-    source: "website",
-    assignedTo: "u2",
-    assignedName: "Casey Torres",
-    scheduledDate: "2026-03-20",
-    notes: "Hail damage across 12 units. Insurance claim #INC-20240115.",
+    quotedAmount: 42000,
     createdAt: "2026-03-01",
     updatedAt: "2026-03-05",
   },
   {
     id: "job_003",
     orgId: "org_1",
-    title: "Flat Roof Coating – Commercial",
-    client: "Pinnacle Warehousing LLC",
-    clientEmail: "ops@pinnaclewh.com",
-    clientPhone: "(555) 440-7788",
+    customerId: "cust_003",
+    customerName: "Pinnacle Warehousing LLC",
+    title: "Flat Roof Coating - Commercial",
     address: "2200 Industrial Pkwy, Round Rock TX 78665",
-    status: "scheduled",
-    value: 11200,
-    source: "google",
-    assignedTo: "u4",
-    assignedName: "Morgan Davis",
-    scheduledDate: "2026-03-15",
+    status: "approved",
+    quotedAmount: 11200,
+    approvedAmount: 11200,
     createdAt: "2026-03-03",
-    updatedAt: "2026-03-06",
+    updatedAt: "2026-03-10",
   },
   {
     id: "job_004",
     orgId: "org_1",
+    customerId: "cust_004",
+    customerName: "Raj Sharma",
     title: "Roof Inspection + Minor Repair",
-    client: "Raj Sharma",
-    clientEmail: "raj.sharma@gmail.com",
-    clientPhone: "(555) 112-3344",
     address: "304 Willow Bend Ct, Cedar Park TX 78613",
     status: "completed",
-    value: 850,
-    source: "google",
-    assignedTo: "u3",
-    assignedName: "Riley Chen",
-    completedDate: "2026-03-04",
+    quotedAmount: 850,
+    approvedAmount: 850,
     createdAt: "2026-03-02",
     updatedAt: "2026-03-04",
   },
   {
     id: "job_005",
     orgId: "org_1",
-    title: "New Construction Roof – 4BD Home",
-    client: "Linwood Builders",
-    clientEmail: "bids@linwoodbuilders.com",
-    clientPhone: "(555) 880-2244",
+    customerId: "cust_005",
+    customerName: "Linwood Builders",
+    title: "New Construction Roof - 4BD Home",
     address: "5511 Sunrise Meadow, Pflugerville TX 78660",
     status: "new",
-    value: 22400,
-    source: "referral",
+    quotedAmount: 22400,
     createdAt: "2026-03-07",
     updatedAt: "2026-03-07",
   },
   {
     id: "job_006",
     orgId: "org_1",
+    customerId: "cust_006",
+    customerName: "Maria Gomez",
     title: "Gutter Replacement + Downspouts",
-    client: "Maria Gomez",
-    clientEmail: "mgomez@yahoo.com",
-    clientPhone: "(555) 660-1122",
     address: "712 Blue Sage Dr, Austin TX 78749",
-    status: "contacted",
-    value: 3200,
-    source: "facebook",
-    assignedTo: "u2",
-    assignedName: "Casey Torres",
-    createdAt: "2026-03-06",
-    updatedAt: "2026-03-08",
+    status: "quoted",
+    quotedAmount: 3200,
+    notes: "Customer wants white aluminum gutters to match fascia.",
+    createdAt: "2026-02-25",
+    updatedAt: "2026-02-28",
   },
   {
     id: "job_007",
     orgId: "org_1",
+    customerId: "cust_007",
+    customerName: "Douglas Whitfield",
     title: "Emergency Leak Repair",
-    client: "Douglas Whitfield",
-    clientEmail: "dwhitfield@work.net",
-    clientPhone: "(555) 990-3344",
     address: "89 Clearwater Pass, Austin TX 78703",
-    status: "completed",
-    value: 1400,
-    source: "referral",
-    assignedTo: "u3",
-    assignedName: "Riley Chen",
-    completedDate: "2026-03-05",
+    status: "invoiced",
+    quotedAmount: 1400,
+    approvedAmount: 1400,
     createdAt: "2026-03-04",
-    updatedAt: "2026-03-05",
+    updatedAt: "2026-03-06",
   },
   {
     id: "job_008",
     orgId: "org_1",
-    title: "Tile Roof Restoration",
-    client: "Sunset Hills Church",
-    clientEmail: "admin@sunsethills.org",
-    clientPhone: "(555) 770-6655",
-    address: "1200 Church Hill Rd, Austin TX 78745",
-    status: "cancelled",
-    value: 16000,
-    source: "door_knock",
-    notes: "Client decided to postpone until next fiscal year.",
-    createdAt: "2026-02-20",
-    updatedAt: "2026-03-01",
+    customerId: "cust_008",
+    customerName: "Westfield Property Mgmt",
+    title: "Multi-Unit Roof Repair - 6 Townhomes",
+    address: "300-360 Westfield Row, Austin TX 78704",
+    status: "in_progress",
+    quotedAmount: 28600,
+    approvedAmount: 28600,
+    createdAt: "2026-02-25",
+    updatedAt: "2026-03-08",
   },
   {
     id: "job_009",
     orgId: "org_1",
+    customerId: "cust_009",
+    customerName: "Hernandez Residence",
     title: "Skylight Installation x3",
-    client: "Hernandez Residence",
-    clientEmail: "tony.h@gmail.com",
-    clientPhone: "(555) 224-8890",
     address: "455 Creekwood Dr, Bastrop TX 78602",
     status: "quoted",
-    value: 7800,
-    source: "website",
+    quotedAmount: 7800,
     createdAt: "2026-03-08",
     updatedAt: "2026-03-09",
   },
   {
     id: "job_010",
     orgId: "org_1",
-    title: "Multi-Unit Roof Repair – 6 Townhomes",
-    client: "Westfield Property Mgmt",
-    clientEmail: "maint@westfield.com",
-    clientPhone: "(555) 110-5566",
-    address: "300–360 Westfield Row, Austin TX 78704",
-    status: "in_progress",
-    value: 28600,
-    source: "referral",
-    assignedTo: "u4",
-    assignedName: "Morgan Davis",
-    scheduledDate: "2026-03-05",
-    createdAt: "2026-02-25",
-    updatedAt: "2026-03-08",
+    customerId: "cust_010",
+    customerName: "Summit Dental Group",
+    title: "Commercial Roof Inspection",
+    address: "920 Medical Dr, Austin TX 78756",
+    status: "new",
+    quotedAmount: 450,
+    createdAt: "2026-03-10",
+    updatedAt: "2026-03-10",
+  },
+  {
+    id: "job_011",
+    orgId: "org_1",
+    customerId: "cust_005",
+    customerName: "Linwood Builders",
+    title: "Garage Roof Repair",
+    address: "5511 Sunrise Meadow, Pflugerville TX 78660",
+    status: "completed",
+    quotedAmount: 2200,
+    approvedAmount: 2200,
+    createdAt: "2026-02-10",
+    updatedAt: "2026-02-20",
+  },
+  {
+    id: "job_012",
+    orgId: "org_1",
+    customerId: "cust_001",
+    customerName: "Henderson Family",
+    title: "Gutter Cleaning",
+    address: "142 Oak Creek Dr, Austin TX 78701",
+    status: "invoiced",
+    quotedAmount: 350,
+    approvedAmount: 350,
+    createdAt: "2026-01-15",
+    updatedAt: "2026-01-20",
   },
 ];
 
-export const LEADS: Lead[] = [
-  { id: "lead_001", orgId: "org_1", name: "Tom Bradley", email: "tom@email.com", phone: "(555) 111-2222", source: "google", status: "new", value: 5000, createdAt: "2026-03-09" },
-  { id: "lead_002", orgId: "org_1", name: "Priya Nair", email: "priya@email.com", phone: "(555) 333-4444", source: "facebook", status: "contacted", value: 3200, createdAt: "2026-03-08" },
-  { id: "lead_003", orgId: "org_1", name: "Carlos Vega", phone: "(555) 555-6666", source: "referral", status: "qualified", value: 18000, createdAt: "2026-03-07" },
-  { id: "lead_004", orgId: "org_1", name: "Lisa Park", email: "lisa@email.com", source: "website", status: "converted", value: 11200, createdAt: "2026-03-03" },
-  { id: "lead_005", orgId: "org_1", name: "Derek Hunt", email: "derek@email.com", phone: "(555) 777-8888", source: "yelp", status: "new", value: 2800, createdAt: "2026-03-09" },
-  { id: "lead_006", orgId: "org_1", name: "Angela Frost", phone: "(555) 999-0000", source: "door_knock", status: "lost", notes: "Went with another contractor.", createdAt: "2026-03-01" },
-  { id: "lead_007", orgId: "org_1", name: "Nathan Reeves", email: "nreeves@email.com", source: "google", status: "contacted", value: 6500, createdAt: "2026-03-06" },
-  { id: "lead_008", orgId: "org_1", name: "Sandra Wu", email: "swu@email.com", phone: "(555) 121-3434", source: "referral", status: "qualified", value: 22000, createdAt: "2026-03-05" },
-];
-
-export const PRODUCTS: Product[] = [
-  // Roofing Materials
-  {
-    id: "prod_001",
-    orgId: "org_1",
-    name: "Architectural Shingles (Square)",
-    description: "30-year architectural asphalt shingles. Charcoal blend. Covers 100 sq ft per square.",
-    category: "roofing_materials",
-    price: 185,
-    unit: "square",
-    inStock: true,
-    featured: true,
-    tags: ["shingles", "asphalt", "charcoal"],
-  },
-  {
-    id: "prod_002",
-    orgId: "org_1",
-    name: "Synthetic Underlayment Roll",
-    description: "Lightweight, tear-resistant synthetic roofing underlayment. 10 sq coverage per roll.",
-    category: "roofing_materials",
-    price: 78,
-    unit: "roll",
-    inStock: true,
-    tags: ["underlayment", "synthetic"],
-  },
-  {
-    id: "prod_003",
-    orgId: "org_1",
-    name: "Ridge Cap Shingles",
-    description: "Pre-cut ridge cap shingles to match architectural shingles. Bundle covers 35 lin ft.",
-    category: "roofing_materials",
-    price: 54,
-    unit: "bundle",
-    inStock: true,
-    tags: ["ridge", "cap"],
-  },
-  {
-    id: "prod_004",
-    orgId: "org_1",
-    name: "Ice & Water Shield",
-    description: "Self-adhesive waterproofing membrane for eaves and valleys. 200 sq ft per roll.",
-    category: "roofing_materials",
-    price: 120,
-    unit: "roll",
-    inStock: true,
-    tags: ["ice shield", "waterproofing"],
-  },
-  {
-    id: "prod_005",
-    orgId: "org_1",
-    name: "Roof Deck Nails (1 lb)",
-    description: "Galvanized coil roofing nails. 1-3/4\" length. 300 nails per pound.",
-    category: "roofing_materials",
-    price: 18,
-    unit: "lb",
-    inStock: true,
-    tags: ["nails", "fasteners"],
-  },
-  {
-    id: "prod_006",
-    orgId: "org_1",
-    name: "Drip Edge (10 ft)",
-    description: "Aluminum drip edge flashing, white finish. Protects fascia from water intrusion.",
-    category: "roofing_materials",
-    price: 12,
-    unit: "piece",
-    inStock: false,
-    tags: ["drip edge", "flashing"],
-  },
-  // Gutters & Drainage
-  {
-    id: "prod_007",
-    orgId: "org_1",
-    name: "5\" K-Style Gutter (10 ft)",
-    description: "Pre-painted aluminum K-style gutter section. White. Seamless-ready.",
-    category: "gutters",
-    price: 28,
-    unit: "section",
-    inStock: true,
-    featured: true,
-    tags: ["gutters", "aluminum", "k-style"],
-  },
-  {
-    id: "prod_008",
-    orgId: "org_1",
-    name: "Downspout (10 ft)",
-    description: "2×3\" rectangular aluminum downspout section. Matches K-style gutter system.",
-    category: "gutters",
-    price: 16,
-    unit: "section",
-    inStock: true,
-    tags: ["downspout", "drainage"],
-  },
-  {
-    id: "prod_009",
-    orgId: "org_1",
-    name: "Gutter Guard (4 ft)",
-    description: "Micro-mesh stainless steel gutter guard. Keeps debris out year-round.",
-    category: "gutters",
-    price: 35,
-    unit: "piece",
-    inStock: true,
-    tags: ["gutter guard", "mesh"],
-  },
-  {
-    id: "prod_010",
-    orgId: "org_1",
-    name: "Splash Block",
-    description: "Concrete splash block to direct downspout water away from foundation.",
-    category: "gutters",
-    price: 22,
-    unit: "each",
-    inStock: true,
-    tags: ["drainage", "splash block"],
-  },
-  // Service Packages
-  {
-    id: "prod_011",
-    orgId: "org_1",
-    name: "Basic Roof Inspection",
-    description: "Visual inspection of all roof surfaces, flashings, gutters, and attic ventilation. Written report included.",
-    category: "service_packages",
-    price: 199,
-    unit: "inspection",
-    inStock: true,
-    featured: true,
-    tags: ["inspection", "report"],
-  },
-  {
-    id: "prod_012",
-    orgId: "org_1",
-    name: "Annual Maintenance Plan",
-    description: "Two inspections per year + minor repairs (up to 2 hrs labor each visit). Priority scheduling included.",
-    category: "service_packages",
-    price: 599,
-    unit: "year",
-    inStock: true,
-    featured: true,
-    tags: ["maintenance", "annual", "priority"],
-  },
-  {
-    id: "prod_013",
-    orgId: "org_1",
-    name: "Storm Damage Assessment",
-    description: "Comprehensive post-storm inspection with photo documentation for insurance claims.",
-    category: "service_packages",
-    price: 349,
-    unit: "assessment",
-    inStock: true,
-    tags: ["storm", "insurance", "assessment"],
-  },
-  {
-    id: "prod_014",
-    orgId: "org_1",
-    name: "Flat Roof Coating Application",
-    description: "Elastomeric reflective coating applied to flat or low-slope roofs up to 1,000 sq ft.",
-    category: "service_packages",
-    price: 1800,
-    unit: "job",
-    inStock: true,
-    tags: ["flat roof", "coating", "commercial"],
-  },
-  // Add-ons
-  {
-    id: "prod_015",
-    orgId: "org_1",
-    name: "Skylight Installation (single)",
-    description: "Fixed or vented skylight supply and install. Includes flashing kit and interior trim.",
-    category: "addons",
-    price: 1450,
-    unit: "each",
-    inStock: true,
-    featured: true,
-    tags: ["skylight", "natural light"],
-  },
-  {
-    id: "prod_016",
-    orgId: "org_1",
-    name: "Ridge Vent (10 ft)",
-    description: "Low-profile continuous ridge vent for improved attic ventilation.",
-    category: "addons",
-    price: 65,
-    unit: "section",
-    inStock: true,
-    tags: ["ventilation", "ridge vent"],
-  },
-  {
-    id: "prod_017",
-    orgId: "org_1",
-    name: "Attic Insulation Batt (R-38)",
-    description: "Fiberglass batt insulation, R-38 value, covers 40 sq ft per bag.",
-    category: "addons",
-    price: 48,
-    unit: "bag",
-    inStock: true,
-    tags: ["insulation", "energy", "attic"],
-  },
-  {
-    id: "prod_018",
-    orgId: "org_1",
-    name: "Chimney Flashing Kit",
-    description: "Step and counter flashing kit for standard chimney. Galvanized steel.",
-    category: "addons",
-    price: 210,
-    unit: "kit",
-    inStock: false,
-    tags: ["chimney", "flashing"],
-  },
-];
-
-export function getOrgProducts(orgId: string): Product[] {
-  return PRODUCTS.filter((p) => p.orgId === orgId);
-}
-
+// ── Revenue data ────────────────────────────────────────────
 export const MONTHLY_REVENUE = [
-  { month: "Sep", revenue: 38000, jobs: 8 },
   { month: "Oct", revenue: 52000, jobs: 11 },
   { month: "Nov", revenue: 44000, jobs: 9 },
   { month: "Dec", revenue: 29000, jobs: 6 },
@@ -440,115 +211,64 @@ export const MONTHLY_REVENUE = [
   { month: "Mar", revenue: 54000, jobs: 10 },
 ];
 
+// ── Helpers ─────────────────────────────────────────────────
 export function getOrgJobs(orgId: string): Job[] {
   return JOBS.filter((j) => j.orgId === orgId);
 }
 
-export function getOrgLeads(orgId: string): Lead[] {
-  return LEADS.filter((l) => l.orgId === orgId);
+export function getOrgCustomers(orgId: string): Customer[] {
+  return CUSTOMERS.filter((c) => c.orgId === orgId);
 }
 
 export function getOrgMembers(orgId: string): Member[] {
   return MEMBERS.filter((m) => m.orgId === orgId);
 }
 
-export function getDashboardStats(orgId: string) {
-  const jobs = getOrgJobs(orgId);
-  const leads = getOrgLeads(orgId);
-  const completed = jobs.filter((j) => j.status === "completed");
-  const active = jobs.filter((j) => ["in_progress", "scheduled", "quoted", "contacted"].includes(j.status));
-  const totalRevenue = completed.reduce((s, j) => s + j.value, 0);
-  const pendingRevenue = active.reduce((s, j) => s + j.value, 0);
-  const converted = leads.filter((l) => l.status === "converted").length;
-  return {
-    totalJobs: jobs.length,
-    activeJobs: active.length,
-    completedJobs: completed.length,
-    totalRevenue,
-    pendingRevenue,
-    newLeads: leads.filter((l) => l.status === "new").length,
-    conversionRate: leads.length > 0 ? Math.round((converted / leads.length) * 100) : 0,
-    avgJobValue: completed.length > 0 ? Math.round(totalRevenue / completed.length) : 0,
-  };
+export function getCustomerJobs(customerId: string): Job[] {
+  return JOBS.filter((j) => j.customerId === customerId);
 }
 
-export const ORDERS: Order[] = [
-  {
-    id: "ord_001",
-    orgId: "org_1",
-    orderNumber: "ORD-1001",
-    customer: { name: "Marcus Webb", email: "marcus.webb@email.com", phone: "(555) 210-3847", address: "412 Birchwood Lane, Austin, TX 78701" },
-    items: [
-      { productId: "prod_001", name: "Architectural Shingles (Square)", price: 185, quantity: 20, unit: "square" },
-      { productId: "prod_002", name: "Synthetic Underlayment Roll", price: 78, quantity: 4, unit: "roll" },
-    ],
-    subtotal: 4012,
-    status: "delivered",
-    createdAt: "2026-02-14T10:22:00Z",
-    updatedAt: "2026-02-20T14:00:00Z",
-  },
-  {
-    id: "ord_002",
-    orgId: "org_1",
-    orderNumber: "ORD-1002",
-    customer: { name: "Priya Nair", email: "priya.nair@homesolutions.com", phone: "(555) 874-2190", address: "77 Cedar Ridge Dr, Denver, CO 80203" },
-    items: [
-      { productId: "prod_012", name: "Annual Maintenance Plan", price: 599, quantity: 1, unit: "year" },
-      { productId: "prod_011", name: "Basic Roof Inspection", price: 199, quantity: 1, unit: "inspection" },
-    ],
-    subtotal: 798,
-    status: "processing",
-    createdAt: "2026-03-01T09:05:00Z",
-    updatedAt: "2026-03-01T09:05:00Z",
-  },
-  {
-    id: "ord_003",
-    orgId: "org_1",
-    orderNumber: "ORD-1003",
-    customer: { name: "Dave Kowalski", email: "dkowalski@gmail.com", phone: "(555) 330-6641", address: "5 Oak Hollow Rd, Nashville, TN 37201" },
-    items: [
-      { productId: "prod_007", name: "5\" K-Style Gutter (10 ft)", price: 28, quantity: 12, unit: "section" },
-      { productId: "prod_008", name: "Downspout (10 ft)", price: 16, quantity: 6, unit: "section" },
-      { productId: "prod_009", name: "Gutter Guard (4 ft)", price: 35, quantity: 8, unit: "piece" },
-    ],
-    subtotal: 712,
-    status: "shipped",
-    createdAt: "2026-03-05T14:30:00Z",
-    updatedAt: "2026-03-07T08:00:00Z",
-  },
-  {
-    id: "ord_004",
-    orgId: "org_1",
-    orderNumber: "ORD-1004",
-    customer: { name: "Sandra Ortiz", email: "s.ortiz@renovatepro.net", phone: "(555) 992-4478", address: "201 Maple St, Phoenix, AZ 85001" },
-    items: [
-      { productId: "prod_015", name: "Skylight Installation (single)", price: 1450, quantity: 2, unit: "each" },
-      { productId: "prod_016", name: "Ridge Vent (10 ft)", price: 65, quantity: 5, unit: "section" },
-    ],
-    subtotal: 3225,
-    status: "pending",
-    notes: "Customer requested installation before April 15th.",
-    createdAt: "2026-03-09T11:15:00Z",
-    updatedAt: "2026-03-09T11:15:00Z",
-  },
-  {
-    id: "ord_005",
-    orgId: "org_1",
-    orderNumber: "ORD-1005",
-    customer: { name: "Tom Fischer", email: "tfischer@constructco.com", phone: "(555) 107-8823", address: "88 Industrial Blvd, Houston, TX 77001" },
-    items: [
-      { productId: "prod_004", name: "Ice & Water Shield", price: 120, quantity: 6, unit: "roll" },
-      { productId: "prod_003", name: "Ridge Cap Shingles", price: 54, quantity: 10, unit: "bundle" },
-      { productId: "prod_005", name: "Roof Deck Nails (1 lb)", price: 18, quantity: 20, unit: "lb" },
-    ],
-    subtotal: 1620,
-    status: "cancelled",
-    notes: "Customer cancelled — project delayed to Q3.",
-    createdAt: "2026-02-28T16:45:00Z",
-    updatedAt: "2026-03-02T10:00:00Z",
-  },
-];
+export function getDashboardStats(orgId: string) {
+  const jobs = getOrgJobs(orgId);
+  const today = new Date().toISOString().slice(0, 10);
 
-export function getOrgOrders(orgId: string): Order[] {
-  return ORDERS.filter((o) => o.orgId === orgId);
+  const todaysJobs = jobs.filter(
+    (j) => j.status === "in_progress" || j.status === "approved"
+  ).length;
+
+  const completedOrInvoiced = jobs.filter(
+    (j) => j.status === "completed" || j.status === "invoiced"
+  );
+  const revenue = completedOrInvoiced.reduce(
+    (sum, j) => sum + (j.approvedAmount ?? j.quotedAmount),
+    0
+  );
+
+  const quoted = jobs.filter((j) => j.status === "quoted");
+  const pendingQuotesValue = quoted.reduce((sum, j) => sum + j.quotedAmount, 0);
+
+  const totalQuoted = jobs.filter(
+    (j) => j.status !== "new"
+  ).length;
+  const approved = jobs.filter(
+    (j) =>
+      j.status === "approved" ||
+      j.status === "in_progress" ||
+      j.status === "completed" ||
+      j.status === "invoiced"
+  ).length;
+  const closeRate = totalQuoted > 0 ? Math.round((approved / totalQuoted) * 100) : 0;
+
+  const activeJobs = jobs.filter(
+    (j) => j.status === "in_progress" || j.status === "approved"
+  ).length;
+
+  return {
+    todaysJobs,
+    revenue,
+    pendingQuotes: quoted.length,
+    pendingQuotesValue,
+    closeRate,
+    activeJobs,
+  };
 }

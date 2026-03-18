@@ -1,14 +1,12 @@
 import { Job, JobStatus } from "@/types";
-import { JOB_STATUS_CONFIG } from "@/lib/utils";
-
-const PIPELINE_STATUSES: JobStatus[] = ["new", "contacted", "quoted", "scheduled", "in_progress", "completed"];
+import { JOB_STATUS_CONFIG, PIPELINE_ORDER } from "@/lib/utils";
 
 interface PipelineOverviewProps {
   jobs: Job[];
 }
 
 export function PipelineOverview({ jobs }: PipelineOverviewProps) {
-  const counts = PIPELINE_STATUSES.map((status) => ({
+  const counts = PIPELINE_ORDER.map((status) => ({
     status,
     count: jobs.filter((j) => j.status === status).length,
   }));
@@ -45,12 +43,11 @@ export function PipelineOverview({ jobs }: PipelineOverviewProps) {
 function getBarColor(status: JobStatus): string {
   const map: Record<JobStatus, string> = {
     new:         "#8b5cf6",
-    contacted:   "#3b82f6",
     quoted:      "#f59e0b",
-    scheduled:   "#06b6d4",
+    approved:    "#3b82f6",
     in_progress: "#f97316",
     completed:   "#22c55e",
-    cancelled:   "#9ca3af",
+    invoiced:    "#059669",
   };
   return map[status];
 }

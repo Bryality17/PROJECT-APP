@@ -5,14 +5,12 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Briefcase,
+  FileText,
   Users,
-  BarChart3,
   Settings,
-  UserCircle,
   Zap,
   LogOut,
   Bell,
-  ShoppingBag,
 } from "lucide-react";
 import { OrgSwitcher } from "./org-switcher";
 import { useOrg } from "./org-context";
@@ -20,13 +18,11 @@ import { cn } from "@/lib/utils";
 import { ORGS } from "@/lib/mock-data";
 
 const NAV_ITEMS = [
-  { href: "/dashboard",          label: "Dashboard",  icon: LayoutDashboard },
-  { href: "/dashboard/jobs",     label: "Jobs",        icon: Briefcase },
-  { href: "/dashboard/leads",    label: "Leads",       icon: UserCircle },
-  { href: "/dashboard/shop",     label: "Shop",        icon: ShoppingBag },
-  { href: "/dashboard/reports",  label: "Reports",     icon: BarChart3 },
-  { href: "/dashboard/team",     label: "Team",        icon: Users },
-  { href: "/dashboard/settings", label: "Settings",    icon: Settings },
+  { href: "/dashboard",            label: "Dashboard",  icon: LayoutDashboard },
+  { href: "/dashboard/jobs",       label: "Job Board",  icon: Briefcase },
+  { href: "/dashboard/quotes",     label: "Quotes",     icon: FileText },
+  { href: "/dashboard/customers",  label: "Customers",  icon: Users },
+  { href: "/dashboard/settings",   label: "Settings",   icon: Settings },
 ];
 
 export function Sidebar() {
@@ -43,7 +39,7 @@ export function Sidebar() {
           </div>
           <div>
             <p className="text-sm font-bold text-white leading-none">Baselyne</p>
-            <p className="text-[10px] text-white/40 leading-none mt-0.5">Freeze Chaos. Heat Results.</p>
+            <p className="text-[10px] text-white/40 leading-none mt-0.5">Service CRM</p>
           </div>
         </div>
         <OrgSwitcher orgs={ORGS} currentOrg={currentOrg} onSwitch={setCurrentOrg} />

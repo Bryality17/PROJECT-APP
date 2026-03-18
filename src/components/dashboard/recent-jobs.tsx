@@ -9,7 +9,10 @@ interface RecentJobsProps {
 }
 
 export function RecentJobs({ jobs }: RecentJobsProps) {
-  const recent = jobs.slice(0, 5);
+  const recent = [...jobs]
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, 5);
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
       <div className="flex items-center justify-between px-5 pt-5 pb-3">
@@ -31,11 +34,11 @@ export function RecentJobs({ jobs }: RecentJobsProps) {
             <div key={job.id} className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 transition-colors">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">{job.title}</p>
-                <p className="text-xs text-gray-500 truncate">{job.client}</p>
+                <p className="text-xs text-gray-500 truncate">{job.customerName}</p>
               </div>
               <Badge color={cfg.color} bg={cfg.bg} border={cfg.border}>{cfg.label}</Badge>
               <p className="text-sm font-semibold text-gray-900 w-20 text-right">
-                {formatCurrency(job.value)}
+                {formatCurrency(job.quotedAmount)}
               </p>
             </div>
           );

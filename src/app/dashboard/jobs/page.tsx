@@ -5,12 +5,11 @@ import { useOrg } from "@/components/layout/org-context";
 import { Topbar } from "@/components/layout/topbar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { getOrgJobs } from "@/lib/mock-data";
-import { Job, JobStatus } from "@/types";
+import { getOrgJobs, getOrgCustomers } from "@/lib/mock-data";
+import { Job, JobStatus, Customer } from "@/types";
 import {
   JOB_STATUS_CONFIG,
-  LEAD_SOURCE_CONFIG,
+  PIPELINE_ORDER,
   formatCurrency,
   formatDate,
   cn,
@@ -23,35 +22,24 @@ import {
   Phone,
   Mail,
   MapPin,
-  User,
-  Calendar,
-  ChevronRight,
-  Filter,
+  X,
 } from "lucide-react";
-
-const PIPELINE_ORDER: JobStatus[] = [
-  "new",
-  "contacted",
-  "quoted",
-  "scheduled",
-  "in_progress",
-  "completed",
-  "cancelled",
-];
 
 export default function JobsPage() {
   const { currentOrg } = useOrg();
   const allJobs = getOrgJobs(currentOrg.id);
+  const customers = getOrgCustomers(currentOrg.id);
 
-  const [view, setView] = useState<"list" | "kanban">("list");
+  const [view, setView] = useState<"list" | "kanban">("kanban");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<JobStatus | "all">("all");
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   const filtered = allJobs.filter((j) => {
     const matchSearch =
       j.title.toLowerCase().includes(search.toLowerCase()) ||
-      j.client.toLowerCase().includes(search.toLowerCase());
+      j.customerName.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === "all" || j.status === statusFilter;
     return matchSearch && matchStatus;
   });
@@ -60,10 +48,10 @@ export default function JobsPage() {
     <div className="flex flex-col h-full overflow-hidden">
       <Topbar
         currentOrg={currentOrg}
-        title="Jobs"
-        subtitle={`${allJobs.length} total jobs · ${allJobs.filter((j) => j.status === "in_progress").length} in progress`}
+        title="Job Board"
+        subtitle={`${allJobs.length} total jobs`}
         action={
-          <Button size="sm">
+          <Button size="sm" onClick={() => setShowCreateModal(true)}>
             <Plus className="w-3.5 h-3.5" /> New Job
           </Button>
         }
@@ -77,7 +65,7 @@ export default function JobsPage() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search jobs or clients…"
+              placeholder="Search jobs or customers..."
               className="w-full pl-9 pr-4 py-1.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-transparent"
             />
           </div>
@@ -95,7 +83,7 @@ export default function JobsPage() {
             >
               All ({allJobs.length})
             </button>
-            {PIPELINE_ORDER.slice(0, 6).map((s) => {
+            {PIPELINE_ORDER.map((s) => {
               const cfg = JOB_STATUS_CONFIG[s];
               const count = allJobs.filter((j) => j.status === s).length;
               return (
@@ -145,17 +133,23 @@ export default function JobsPage() {
             <KanbanView jobs={filtered} onSelect={setSelectedJob} />
           )}
 
-          {/* Detail Panel */}
           {selectedJob && (
             <JobDetail job={selectedJob} onClose={() => setSelectedJob(null)} />
           )}
         </div>
       </div>
+
+      {showCreateModal && (
+        <CreateJobModal
+          customers={customers}
+          onClose={() => setShowCreateModal(false)}
+        />
+      )}
     </div>
   );
 }
 
-/* ── List View ─────────────────────────────────────────────────────────── */
+/* ── List View ─────────────────────────────────────────────── */
 
 function ListView({
   jobs,
@@ -171,18 +165,16 @@ function ListView({
       <table className="w-full text-sm">
         <thead className="bg-gray-50 border-b border-gray-200 sticky top-0 z-10">
           <tr>
-            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Job / Client</th>
+            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Job / Customer</th>
             <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-3">Status</th>
-            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-3">Source</th>
-            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-3">Assigned</th>
-            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-3">Date</th>
-            <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Value</th>
+            <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 py-3">Created</th>
+            <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Quoted</th>
+            <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">Approved</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
           {jobs.map((job) => {
             const cfg = JOB_STATUS_CONFIG[job.status];
-            const src = LEAD_SOURCE_CONFIG[job.source];
             return (
               <tr
                 key={job.id}
@@ -194,28 +186,19 @@ function ListView({
               >
                 <td className="px-6 py-3.5">
                   <p className="font-medium text-gray-900">{job.title}</p>
-                  <p className="text-xs text-gray-500">{job.client}</p>
+                  <p className="text-xs text-gray-500">{job.customerName}</p>
                 </td>
                 <td className="px-3 py-3.5">
                   <Badge color={cfg.color} bg={cfg.bg} border={cfg.border}>{cfg.label}</Badge>
                 </td>
                 <td className="px-3 py-3.5">
-                  <span className="text-xs text-gray-600">{src.icon} {src.label}</span>
-                </td>
-                <td className="px-3 py-3.5">
-                  <span className="text-xs text-gray-600">{job.assignedName ?? "—"}</span>
-                </td>
-                <td className="px-3 py-3.5">
-                  <span className="text-xs text-gray-500">
-                    {job.completedDate
-                      ? formatDate(job.completedDate)
-                      : job.scheduledDate
-                      ? formatDate(job.scheduledDate)
-                      : formatDate(job.createdAt)}
-                  </span>
+                  <span className="text-xs text-gray-500">{formatDate(job.createdAt)}</span>
                 </td>
                 <td className="px-6 py-3.5 text-right font-semibold text-gray-900">
-                  {formatCurrency(job.value)}
+                  {formatCurrency(job.quotedAmount)}
+                </td>
+                <td className="px-6 py-3.5 text-right font-semibold text-gray-900">
+                  {job.approvedAmount ? formatCurrency(job.approvedAmount) : "—"}
                 </td>
               </tr>
             );
@@ -231,17 +214,16 @@ function ListView({
   );
 }
 
-/* ── Kanban View ───────────────────────────────────────────────────────── */
+/* ── Kanban View ───────────────────────────────────────────── */
 
 function KanbanView({ jobs, onSelect }: { jobs: Job[]; onSelect: (j: Job) => void }) {
-  const columns = PIPELINE_ORDER.filter((s) => s !== "cancelled");
   return (
     <div className="flex-1 overflow-x-auto p-4">
       <div className="flex gap-3 h-full min-w-max">
-        {columns.map((status) => {
+        {PIPELINE_ORDER.map((status) => {
           const cfg = JOB_STATUS_CONFIG[status];
           const colJobs = jobs.filter((j) => j.status === status);
-          const total = colJobs.reduce((s, j) => s + j.value, 0);
+          const total = colJobs.reduce((s, j) => s + j.quotedAmount, 0);
           return (
             <div key={status} className="w-72 flex flex-col">
               <div className={cn("rounded-t-xl px-3 py-2.5 border border-b-0", cfg.bg, cfg.border)}>
@@ -270,35 +252,27 @@ function KanbanView({ jobs, onSelect }: { jobs: Job[]; onSelect: (j: Job) => voi
 }
 
 function KanbanCard({ job, onClick }: { job: Job; onClick: () => void }) {
-  const src = LEAD_SOURCE_CONFIG[job.source];
   return (
     <button
       onClick={onClick}
       className="w-full bg-white rounded-xl border border-gray-200 p-3 text-left hover:shadow-md hover:border-orange-200 transition-all group"
     >
       <p className="text-sm font-medium text-gray-900 leading-snug group-hover:text-orange-600">{job.title}</p>
-      <p className="text-xs text-gray-500 mt-0.5">{job.client}</p>
+      <p className="text-xs text-gray-500 mt-0.5">{job.customerName}</p>
       <div className="flex items-center justify-between mt-2.5">
-        <span className="text-xs text-gray-500">{src.icon} {src.label}</span>
-        <span className="text-sm font-bold text-gray-900">{formatCurrency(job.value)}</span>
+        <span className="text-xs text-gray-400">{formatDate(job.createdAt)}</span>
+        <span className="text-sm font-bold text-gray-900">{formatCurrency(job.quotedAmount)}</span>
       </div>
-      {job.assignedName && (
-        <div className="flex items-center gap-1.5 mt-2">
-          <div className="w-4 h-4 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 text-[9px] font-bold">
-            {job.assignedName.charAt(0)}
-          </div>
-          <span className="text-xs text-gray-500">{job.assignedName}</span>
-        </div>
-      )}
     </button>
   );
 }
 
-/* ── Job Detail Panel ──────────────────────────────────────────────────── */
+/* ── Job Detail Panel ──────────────────────────────────────── */
 
 function JobDetail({ job, onClose }: { job: Job; onClose: () => void }) {
   const cfg = JOB_STATUS_CONFIG[job.status];
-  const src = LEAD_SOURCE_CONFIG[job.source];
+  const customer = getOrgCustomers("org_1").find((c) => c.id === job.customerId);
+
   return (
     <div className="w-80 border-l border-gray-200 bg-white flex flex-col overflow-hidden flex-shrink-0">
       <div className="flex items-start justify-between p-5 border-b border-gray-100">
@@ -306,28 +280,33 @@ function JobDetail({ job, onClose }: { job: Job; onClose: () => void }) {
           <Badge color={cfg.color} bg={cfg.bg} border={cfg.border} className="mb-2">{cfg.label}</Badge>
           <h2 className="text-sm font-semibold text-gray-900 leading-snug">{job.title}</h2>
         </div>
-        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 ml-2 text-lg leading-none">×</button>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 ml-2 text-lg leading-none">&times;</button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
         {/* Value */}
         <div className="bg-orange-50 rounded-xl p-4 text-center border border-orange-100">
-          <p className="text-xs text-orange-600 font-medium uppercase tracking-wider">Job Value</p>
-          <p className="text-3xl font-bold text-gray-900 mt-1">{formatCurrency(job.value)}</p>
+          <p className="text-xs text-orange-600 font-medium uppercase tracking-wider">Quoted</p>
+          <p className="text-3xl font-bold text-gray-900 mt-1">{formatCurrency(job.quotedAmount)}</p>
+          {job.approvedAmount && (
+            <p className="text-xs text-green-600 font-medium mt-1">
+              Approved: {formatCurrency(job.approvedAmount)}
+            </p>
+          )}
         </div>
 
-        {/* Client info */}
+        {/* Customer info */}
         <div>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Client</p>
-          <p className="text-sm font-medium text-gray-900">{job.client}</p>
-          {job.clientEmail && (
-            <a href={`mailto:${job.clientEmail}`} className="flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-600 mt-1">
-              <Mail className="w-3 h-3" /> {job.clientEmail}
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Customer</p>
+          <p className="text-sm font-medium text-gray-900">{job.customerName}</p>
+          {customer?.email && (
+            <a href={`mailto:${customer.email}`} className="flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-600 mt-1">
+              <Mail className="w-3 h-3" /> {customer.email}
             </a>
           )}
-          {job.clientPhone && (
-            <a href={`tel:${job.clientPhone}`} className="flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-600 mt-1">
-              <Phone className="w-3 h-3" /> {job.clientPhone}
+          {customer?.phone && (
+            <a href={`tel:${customer.phone}`} className="flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-600 mt-1">
+              <Phone className="w-3 h-3" /> {customer.phone}
             </a>
           )}
           {job.address && (
@@ -340,32 +319,22 @@ function JobDetail({ job, onClose }: { job: Job; onClose: () => void }) {
         {/* Details */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <p className="text-xs text-gray-400 font-medium">Source</p>
-            <p className="text-xs font-semibold text-gray-700 mt-0.5">{src.icon} {src.label}</p>
-          </div>
-          {job.assignedName && (
-            <div>
-              <p className="text-xs text-gray-400 font-medium">Assigned To</p>
-              <p className="text-xs font-semibold text-gray-700 mt-0.5">{job.assignedName}</p>
-            </div>
-          )}
-          {job.scheduledDate && (
-            <div>
-              <p className="text-xs text-gray-400 font-medium">Scheduled</p>
-              <p className="text-xs font-semibold text-gray-700 mt-0.5">{formatDate(job.scheduledDate)}</p>
-            </div>
-          )}
-          {job.completedDate && (
-            <div>
-              <p className="text-xs text-gray-400 font-medium">Completed</p>
-              <p className="text-xs font-semibold text-gray-700 mt-0.5">{formatDate(job.completedDate)}</p>
-            </div>
-          )}
-          <div>
             <p className="text-xs text-gray-400 font-medium">Created</p>
             <p className="text-xs font-semibold text-gray-700 mt-0.5">{formatDate(job.createdAt)}</p>
           </div>
+          <div>
+            <p className="text-xs text-gray-400 font-medium">Updated</p>
+            <p className="text-xs font-semibold text-gray-700 mt-0.5">{formatDate(job.updatedAt)}</p>
+          </div>
         </div>
+
+        {/* Description */}
+        {job.description && (
+          <div>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Description</p>
+            <p className="text-xs text-gray-600 bg-gray-50 rounded-lg p-3 border border-gray-100 leading-relaxed">{job.description}</p>
+          </div>
+        )}
 
         {/* Notes */}
         {job.notes && (
@@ -379,6 +348,153 @@ function JobDetail({ job, onClose }: { job: Job; onClose: () => void }) {
       <div className="p-4 border-t border-gray-100 flex gap-2">
         <Button variant="secondary" size="sm" className="flex-1">Edit Job</Button>
         <Button size="sm" className="flex-1">Update Status</Button>
+      </div>
+    </div>
+  );
+}
+
+/* ── Create Job Modal ──────────────────────────────────────── */
+
+function CreateJobModal({
+  customers,
+  onClose,
+}: {
+  customers: Customer[];
+  onClose: () => void;
+}) {
+  const [customerMode, setCustomerMode] = useState<"existing" | "new">("existing");
+  const [selectedCustomerId, setSelectedCustomerId] = useState("");
+  const [newCustomerName, setNewCustomerName] = useState("");
+  const [newCustomerPhone, setNewCustomerPhone] = useState("");
+  const [newCustomerEmail, setNewCustomerEmail] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [quotedAmount, setQuotedAmount] = useState("");
+  const [address, setAddress] = useState("");
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-5 border-b border-gray-100">
+          <h2 className="text-lg font-semibold text-gray-900">Create New Job</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-5 space-y-5">
+          {/* Customer Selection */}
+          <div>
+            <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider block mb-2">Customer</label>
+            <div className="flex gap-2 mb-3">
+              <button
+                onClick={() => setCustomerMode("existing")}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+                  customerMode === "existing" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600"
+                )}
+              >
+                Existing Customer
+              </button>
+              <button
+                onClick={() => setCustomerMode("new")}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+                  customerMode === "new" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-600"
+                )}
+              >
+                New Customer
+              </button>
+            </div>
+
+            {customerMode === "existing" ? (
+              <select
+                value={selectedCustomerId}
+                onChange={(e) => setSelectedCustomerId(e.target.value)}
+                className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+              >
+                <option value="">Select a customer...</option>
+                {customers.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            ) : (
+              <div className="space-y-2">
+                <input
+                  value={newCustomerName}
+                  onChange={(e) => setNewCustomerName(e.target.value)}
+                  placeholder="Customer name"
+                  className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    value={newCustomerPhone}
+                    onChange={(e) => setNewCustomerPhone(e.target.value)}
+                    placeholder="Phone"
+                    className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  />
+                  <input
+                    value={newCustomerEmail}
+                    onChange={(e) => setNewCustomerEmail(e.target.value)}
+                    placeholder="Email"
+                    className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Job Details */}
+          <div>
+            <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider block mb-2">Job Title</label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Full Roof Replacement"
+              className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider block mb-2">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Job details..."
+              rows={3}
+              className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider block mb-2">Estimated Value ($)</label>
+              <input
+                value={quotedAmount}
+                onChange={(e) => setQuotedAmount(e.target.value)}
+                type="number"
+                placeholder="0"
+                className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider block mb-2">Address</label>
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Job site address"
+                className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="p-5 border-t border-gray-100 flex gap-3">
+          <Button variant="secondary" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button className="flex-1">
+            <Plus className="w-4 h-4" /> Create Job
+          </Button>
+        </div>
       </div>
     </div>
   );

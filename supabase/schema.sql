@@ -1,6 +1,5 @@
 -- ============================================================
--- Baselyne Database Schema
--- Multi-org service business operations platform
+-- Baselyne CRM V1 — Job-Based Service CRM
 -- ============================================================
 
 -- Organizations
@@ -35,55 +34,41 @@ create table memberships (
   unique (org_id, user_id)
 );
 
+-- Customers
+create table customers (
+  id          uuid primary key default gen_random_uuid(),
+  org_id      uuid not null references orgs(id) on delete cascade,
+  name        text not null,
+  phone       text,
+  email       text,
+  notes       text,
+  created_at  timestamptz default now()
+);
+
 -- Jobs (core entity)
 create table jobs (
   id              uuid primary key default gen_random_uuid(),
   org_id          uuid not null references orgs(id) on delete cascade,
+  customer_id     uuid not null references customers(id) on delete cascade,
   title           text not null,
   description     text,
-  client_name     text not null,
-  client_email    text,
-  client_phone    text,
-  address         text,
   status          text not null default 'new'
-    check (status in ('new','contacted','quoted','scheduled','in_progress','completed','cancelled')),
-  value           numeric(12,2) default 0,
-  source          text default 'other'
-    check (source in ('website','referral','google','facebook','yelp','door_knock','other')),
-  assigned_to     uuid references profiles(id),
-  scheduled_date  date,
-  completed_date  date,
+    check (status in ('new','quoted','approved','in_progress','completed','invoiced')),
+  quoted_amount   numeric(12,2) default 0,
+  approved_amount numeric(12,2),
+  address         text,
   notes           text,
   created_at      timestamptz default now(),
   updated_at      timestamptz default now()
 );
 
--- Leads
-create table leads (
+-- Job status history (audit trail)
+create table job_status_history (
   id          uuid primary key default gen_random_uuid(),
-  org_id      uuid not null references orgs(id) on delete cascade,
-  name        text not null,
-  email       text,
-  phone       text,
-  source      text default 'other'
-    check (source in ('website','referral','google','facebook','yelp','door_knock','other')),
-  status      text not null default 'new'
-    check (status in ('new','contacted','qualified','converted','lost')),
-  value       numeric(12,2),
-  notes       text,
-  created_at  timestamptz default now(),
-  updated_at  timestamptz default now()
-);
-
--- Org tab visibility settings
-create table org_tabs (
-  id          uuid primary key default gen_random_uuid(),
-  org_id      uuid not null references orgs(id) on delete cascade,
-  tab_key     text not null,
-  visible     boolean not null default true,
-  locked      boolean not null default false, -- true = only system admin can toggle
-  sort_order  int default 0,
-  unique (org_id, tab_key)
+  job_id      uuid not null references jobs(id) on delete cascade,
+  status      text not null
+    check (status in ('new','quoted','approved','in_progress','completed','invoiced')),
+  changed_at  timestamptz default now()
 );
 
 -- ============================================================
@@ -92,9 +77,9 @@ create table org_tabs (
 
 alter table orgs         enable row level security;
 alter table memberships  enable row level security;
+alter table customers    enable row level security;
 alter table jobs         enable row level security;
-alter table leads        enable row level security;
-alter table org_tabs     enable row level security;
+alter table job_status_history enable row level security;
 
 -- Helper function: check if current user is in org
 create or replace function is_org_member(p_org_id uuid)
@@ -106,15 +91,25 @@ returns boolean language sql security definer as $$
   );
 $$;
 
--- Orgs: members can read their own org
+-- Orgs
 create policy "members_can_read_org" on orgs
   for select using (is_org_member(id));
 
--- Memberships: members can see other members in their org
+-- Memberships
 create policy "members_can_read_memberships" on memberships
   for select using (is_org_member(org_id));
 
--- Jobs: org-scoped read/write
+-- Customers: org-scoped
+create policy "members_read_customers" on customers
+  for select using (is_org_member(org_id));
+
+create policy "members_insert_customers" on customers
+  for insert with check (is_org_member(org_id));
+
+create policy "members_update_customers" on customers
+  for update using (is_org_member(org_id));
+
+-- Jobs: org-scoped
 create policy "members_read_jobs" on jobs
   for select using (is_org_member(org_id));
 
@@ -124,29 +119,34 @@ create policy "members_insert_jobs" on jobs
 create policy "members_update_jobs" on jobs
   for update using (is_org_member(org_id));
 
--- Leads: org-scoped read/write
-create policy "members_read_leads" on leads
-  for select using (is_org_member(org_id));
+-- Job status history: via job's org
+create policy "members_read_status_history" on job_status_history
+  for select using (
+    exists (
+      select 1 from jobs j
+      where j.id = job_id and is_org_member(j.org_id)
+    )
+  );
 
-create policy "members_insert_leads" on leads
-  for insert with check (is_org_member(org_id));
-
-create policy "members_update_leads" on leads
-  for update using (is_org_member(org_id));
-
--- Org tabs: org-scoped
-create policy "members_read_org_tabs" on org_tabs
-  for select using (is_org_member(org_id));
+create policy "members_insert_status_history" on job_status_history
+  for insert with check (
+    exists (
+      select 1 from jobs j
+      where j.id = job_id and is_org_member(j.org_id)
+    )
+  );
 
 -- ============================================================
 -- Indexes
 -- ============================================================
 
-create index idx_jobs_org_id          on jobs(org_id);
-create index idx_jobs_status          on jobs(org_id, status);
-create index idx_leads_org_id         on leads(org_id);
-create index idx_memberships_user_id  on memberships(user_id);
-create index idx_memberships_org_id   on memberships(org_id);
+create index idx_customers_org_id      on customers(org_id);
+create index idx_jobs_org_id           on jobs(org_id);
+create index idx_jobs_customer_id      on jobs(customer_id);
+create index idx_jobs_status           on jobs(org_id, status);
+create index idx_status_history_job_id on job_status_history(job_id);
+create index idx_memberships_user_id   on memberships(user_id);
+create index idx_memberships_org_id    on memberships(org_id);
 
 -- ============================================================
 -- Auto-update timestamps
@@ -160,6 +160,5 @@ begin
 end;
 $$;
 
-create trigger jobs_updated_at  before update on jobs  for each row execute function update_updated_at();
-create trigger leads_updated_at before update on leads for each row execute function update_updated_at();
-create trigger orgs_updated_at  before update on orgs  for each row execute function update_updated_at();
+create trigger jobs_updated_at before update on jobs for each row execute function update_updated_at();
+create trigger orgs_updated_at before update on orgs for each row execute function update_updated_at();

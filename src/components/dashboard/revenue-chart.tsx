@@ -19,11 +19,8 @@ export function RevenueChart() {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-sm font-semibold text-gray-900">Monthly Revenue</h3>
-          <p className="text-xs text-gray-500">Completed jobs — last 7 months</p>
+          <p className="text-xs text-gray-500">Completed + invoiced jobs</p>
         </div>
-        <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-2 py-1 rounded-full font-medium">
-          ▲ 11% vs last month
-        </span>
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <BarChart data={MONTHLY_REVENUE} barSize={28} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>

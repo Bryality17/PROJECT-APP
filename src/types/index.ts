@@ -2,21 +2,11 @@ export type OrgRole = "owner" | "admin" | "member";
 
 export type JobStatus =
   | "new"
-  | "contacted"
   | "quoted"
-  | "scheduled"
+  | "approved"
   | "in_progress"
   | "completed"
-  | "cancelled";
-
-export type LeadSource =
-  | "website"
-  | "referral"
-  | "google"
-  | "facebook"
-  | "yelp"
-  | "door_knock"
-  | "other";
+  | "invoiced";
 
 export interface Org {
   id: string;
@@ -40,104 +30,44 @@ export interface Member {
   joinedAt: string;
 }
 
+export interface Customer {
+  id: string;
+  orgId: string;
+  name: string;
+  phone?: string;
+  email?: string;
+  notes?: string;
+  createdAt: string;
+}
+
 export interface Job {
   id: string;
   orgId: string;
+  customerId: string;
+  customerName: string;
   title: string;
   description?: string;
-  client: string;
-  clientEmail?: string;
-  clientPhone?: string;
-  address?: string;
   status: JobStatus;
-  value: number;
-  source: LeadSource;
-  assignedTo?: string;
-  assignedName?: string;
-  scheduledDate?: string;
-  completedDate?: string;
+  quotedAmount: number;
+  approvedAmount?: number;
+  address?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface Lead {
+export interface JobStatusChange {
   id: string;
-  orgId: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  source: LeadSource;
-  status: "new" | "contacted" | "qualified" | "converted" | "lost";
-  value?: number;
-  notes?: string;
-  createdAt: string;
-}
-
-export type ProductCategory =
-  | "roofing_materials"
-  | "gutters"
-  | "service_packages"
-  | "addons";
-
-export interface Product {
-  id: string;
-  orgId: string;
-  name: string;
-  description: string;
-  category: ProductCategory;
-  price: number;
-  unit: string;
-  inStock: boolean;
-  featured?: boolean;
-  tags?: string[];
-}
-
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
-
-export type OrderStatus =
-  | "pending"
-  | "processing"
-  | "shipped"
-  | "delivered"
-  | "cancelled";
-
-export interface OrderItem {
-  productId: string;
-  name: string;
-  price: number;
-  quantity: number;
-  unit: string;
-}
-
-export interface Order {
-  id: string;
-  orgId: string;
-  orderNumber: string;
-  customer: {
-    name: string;
-    email: string;
-    phone: string;
-    address: string;
-  };
-  items: OrderItem[];
-  subtotal: number;
-  status: OrderStatus;
-  notes?: string;
-  createdAt: string;
-  updatedAt: string;
+  jobId: string;
+  status: JobStatus;
+  changedAt: string;
 }
 
 export interface DashboardStats {
-  totalJobs: number;
+  todaysJobs: number;
+  revenue: number;
+  pendingQuotes: number;
+  pendingQuotesValue: number;
+  closeRate: number;
   activeJobs: number;
-  completedJobs: number;
-  totalRevenue: number;
-  pendingRevenue: number;
-  newLeads: number;
-  conversionRate: number;
-  avgJobValue: number;
 }
